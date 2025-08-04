@@ -50,9 +50,10 @@ async def upload_file_and_get_url(session, file):
         data_link = await response.json()
         upload_url = data_link['href']
 
+    file_data = file.read()
     async with session.put(
             url=upload_url,
-            data=file.stream,
+            data=file_data,
     ) as response:
         location = response.headers['Location']
         location = parse.unquote(location)
