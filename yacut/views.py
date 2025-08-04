@@ -1,5 +1,4 @@
 from flask import redirect, render_template
-from sqlalchemy.exc import IntegrityError
 
 from . import app, db
 from .forms import FilesForm, LinksForm
@@ -11,26 +10,19 @@ from .yandex_disk import async_upload_files_to_yadisk
 def index_view():
     form = LinksForm()
     if form.validate_on_submit():
-        short_link = form.custom_id.data
-        result = URLMap(
-            original=form.original_link.data,
-            short=short_link
-        )
-        db.session.add(result)
         try:
-            db.session.commit()
+            url_map = URLMap.validate_and_create(
+                original_link=form.original_link.data,
+                short_link=form.custom_id.data if form.custom_id.data else None
+            )
             return render_template(
                 'index.html',
                 form=form,
-                short_link=result.short
+                short_link=url_map.short
             )
-        except IntegrityError:
+        except ValueError as e:
             db.session.rollback()
-            form.custom_id.errors.append(
-                'Произошла ошибка при создании ссылки. '
-                'Пожалуйста, попробуйте другой вариант.'
-            )
-            return render_template('index.html', form=form)
+            form.custom_id.errors.append(str(e))
     return render_template('index.html', form=form)
 
 

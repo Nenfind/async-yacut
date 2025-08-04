@@ -1,8 +1,9 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import MultipleFileField
 from wtforms import StringField, SubmitField, URLField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, Optional, ValidationError
 
+from .constants import MAX_SHORT_LINK_LENGTH, MIN_SHORT_LINK_LENGTH
 from .models import URLMap
 
 
@@ -14,10 +15,11 @@ class LinksForm(FlaskForm):
     custom_id = StringField(
         'Ваш вариант короткой ссылки',
         validators=[Length(
-            0,
-            16,
+            MIN_SHORT_LINK_LENGTH,
+            MAX_SHORT_LINK_LENGTH,
             message='Ссылка должна быть не длиннее 16 символов'
         ),
+            Optional()
         ]
     )
     submit = SubmitField('Создать')
