@@ -1,6 +1,6 @@
 import random
 import string
-from datetime import UTC, datetime
+from datetime import datetime
 
 from sqlalchemy import event, select
 
@@ -21,7 +21,7 @@ class URLMap(db.Model):
         nullable=False,
         unique=True
     )
-    timestamp = db.Column(db.DateTime, index=True, default=datetime.now(UTC))
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     def to_dict_only_long(self):
         return {
