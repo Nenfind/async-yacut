@@ -49,23 +49,22 @@ class URLMap(db.Model):
                 raise ValueError(
                     'Предложенный вариант короткой ссылки уже существует.'
                 )
-            # if not all(
-            #         c in (string.ascii_letters + string.digits)
-            #         for c in short_link
-            # ):
-            #     raise ValueError(
-            #         "Указано недопустимое имя для короткой ссылки"
-            #     )
-            not_valid_chars = []
-            for char in short_link:
-                if char not in (string.ascii_letters + string.digits):
-                    not_valid_chars.append(char)
-            if len(not_valid_chars) > 0:
+            if not all(
+                    c in (string.ascii_letters + string.digits)
+                    for c in short_link
+            ):
                 raise ValueError(
-                    'Эти символы нельзя использовать: '
-                    f'{", ".join(set(not_valid_chars))} '
+                    "Указано недопустимое имя для короткой ссылки"
                 )
-
+            # not_valid_chars = []
+            # for char in short_link:
+            #     if char not in (string.ascii_letters + string.digits):
+            #         not_valid_chars.append(char)
+            # if len(not_valid_chars) > 0:
+            #     raise ValueError(
+            #         'Эти символы нельзя использовать: '
+            #         f'{", ".join(set(not_valid_chars))} '
+            #     )
         url_map = URLMap(original=original_link, short=short_link)
         db.session.add(url_map)
         try:
